@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.project.agenda.domain.services.exceptions.BusinessException;
 import com.project.agenda.domain.services.exceptions.DatabaseException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -54,6 +55,23 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<StandardError> businessException(BusinessException exception,
+            HttpServletRequest request) {
+
+        StandardError error = new StandardError();
+
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        error.setError("Business Exception");
+        error.setMessage(exception.getMessage());
+        error.setPath(request.getRequestURI());
+        error.setStatus(status.value());
+        error.setTimeStamp(Instant.now());
+
+        return ResponseEntity.status(status).body(error);
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<StandardError> entityNotFoundException(EntityNotFoundException exception,
             HttpServletRequest request) {
@@ -67,7 +85,7 @@ public class ResourceExceptionHandler {
         error.setPath(request.getRequestURI());
         error.setStatus(status.value());
         error.setTimeStamp(Instant.now());
-        
+
         return ResponseEntity.status(status).body(error);
     }
 }

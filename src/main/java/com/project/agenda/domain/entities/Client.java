@@ -17,6 +17,10 @@ public class Client extends Person {
     private LocalDate dateOfBirth;
 
     public Client() {}
+    
+    public Client(Long id) {
+        super(id);
+    }
 
     public Client(String name, String phone, LocalDate dateOfBirth) {
         super(name, phone);
