@@ -35,10 +35,17 @@ public class Professional extends Person{
     @OneToMany(mappedBy = "professional")
     private List<Appointment> appointments = new ArrayList<>();
 
-    public void addWorkScheduleItem(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, int slots, int slotSize) {
-        
+    public void addWorkScheduleItem(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, int slots,
+            int slotSize) {
+
         WorkScheduleItem workScheduleItem = new WorkScheduleItem(dayOfWeek, startTime, endTime, slots, slotSize);
         workScheduleItens.add(workScheduleItem);
+    }
+    
+    public Professional() {}
+    
+    public Professional(Long id) {
+        super(id);
     }
 
     public boolean isActive() {

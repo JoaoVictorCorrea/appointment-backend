@@ -34,6 +34,12 @@ public class Area {
     @OneToMany(mappedBy = "area")
     private List<Appointment> appointments = new ArrayList<>();
 
+    public Area() {}
+    
+    public Area(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

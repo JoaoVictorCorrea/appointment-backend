@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.project.agenda.domain.entities.Client;
@@ -72,7 +71,7 @@ public class ClientService {
             }
         }
         catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Conflito ao remover o cliente.", HttpStatus.BAD_REQUEST);
+            throw new DatabaseException("Conflito ao remover o cliente.");
         }
     }
 }
