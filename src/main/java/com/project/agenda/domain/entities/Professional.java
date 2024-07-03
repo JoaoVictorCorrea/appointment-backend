@@ -28,15 +28,13 @@ public class Professional extends Person{
                inverseJoinColumns = @JoinColumn(name = "AREA_ID"))
     private Set<Area> areas = new HashSet<>();
 
-    @OneToMany
-    @JoinColumn(name = "PROFESSIONAL_ID")
+    @OneToMany(mappedBy = "professional")
     private List<WorkScheduleItem> workScheduleItens = new ArrayList<>();
 
     @OneToMany(mappedBy = "professional")
     private List<Appointment> appointments = new ArrayList<>();
 
-    public void addWorkScheduleItem(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, int slots,
-            int slotSize) {
+    public void addWorkScheduleItem(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, int slots, int slotSize) {
 
         WorkScheduleItem workScheduleItem = new WorkScheduleItem(dayOfWeek, startTime, endTime, slots, slotSize);
         workScheduleItens.add(workScheduleItem);
