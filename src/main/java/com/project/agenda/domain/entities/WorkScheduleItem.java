@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,6 +24,10 @@ public class WorkScheduleItem {
     private LocalTime endTime;
     private Integer slots;
     private Integer slotSize;
+
+    @ManyToOne
+    @JoinColumn(name = "PROFESSIONAL_ID")
+    private Professional professional;
 
     public WorkScheduleItem() {}
 
@@ -80,6 +86,14 @@ public class WorkScheduleItem {
 
     public void setSlotSize(Integer slotSize) {
         this.slotSize = slotSize;
+    }
+
+    public Professional getProfessional() {
+        return professional;
+    }
+
+    public void setProfessional(Professional professional) {
+        this.professional = professional;
     }
 
     @Override
