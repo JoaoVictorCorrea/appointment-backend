@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.project.agenda.domain.services.exceptions.BusinessException;
 import com.project.agenda.domain.services.exceptions.DatabaseException;
+import com.project.agenda.domain.services.exceptions.ParameterException;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
@@ -100,6 +102,43 @@ public class ResourceExceptionHandler {
 
         error.setError("Parse Date Exception");
         error.setMessage("Formato de data inválido. Utilize: 'yyyy-MM-dd'");
+        error.setPath(request.getRequestURI());
+        error.setStatus(status.value());
+        error.setTimeStamp(Instant.now());
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ValidationErrors> constraintViolationException(ConstraintViolationException exception,
+            HttpServletRequest request) {
+
+        ValidationErrors error = new ValidationErrors();
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        error.setError("Constraint Error");
+        error.setMessage("Parâmetros Requiridos.");
+        error.setPath(request.getRequestURI());
+        error.setStatus(status.value());
+        error.setTimeStamp(Instant.now());
+
+        exception.getConstraintViolations()
+                .forEach(e -> error.addError(e.getMessage()));
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(ParameterException.class)
+    public ResponseEntity<StandardError> parameterException(ParameterException exception,
+            HttpServletRequest request) {
+
+        StandardError error = new StandardError();
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        error.setError("Parameter Exception");
+        error.setMessage(exception.getMessage());
         error.setPath(request.getRequestURI());
         error.setStatus(status.value());
         error.setTimeStamp(Instant.now());

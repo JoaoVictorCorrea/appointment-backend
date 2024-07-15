@@ -3,6 +3,9 @@ package com.project.agenda.domain.entities;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
+import com.project.agenda.domain.converters.DayOfWeekConverter;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +22,9 @@ public class WorkScheduleItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Convert(converter = DayOfWeekConverter.class)
     private DayOfWeek dayOfWeek;
+    
     private LocalTime startTime;
     private LocalTime endTime;
     private Integer slots;
