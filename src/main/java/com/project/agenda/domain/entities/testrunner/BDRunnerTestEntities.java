@@ -1,5 +1,6 @@
 package com.project.agenda.domain.entities.testrunner;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -14,11 +15,13 @@ import com.project.agenda.domain.entities.AppointmentType;
 import com.project.agenda.domain.entities.Area;
 import com.project.agenda.domain.entities.Client;
 import com.project.agenda.domain.entities.Professional;
+import com.project.agenda.domain.entities.WorkScheduleItem;
 import com.project.agenda.domain.repositories.AppointmentRepository;
 import com.project.agenda.domain.repositories.AppointmentTypeRepository;
 import com.project.agenda.domain.repositories.AreaRepository;
 import com.project.agenda.domain.repositories.ClientRepository;
 import com.project.agenda.domain.repositories.ProfessionalRepository;
+import com.project.agenda.domain.repositories.WorkScheduleItemRepository;
 
 @Component
 @Profile("runner")
@@ -39,6 +42,9 @@ public class BDRunnerTestEntities implements ApplicationRunner {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    @Autowired
+    private WorkScheduleItemRepository workScheduleItemRepository;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         
@@ -54,6 +60,9 @@ public class BDRunnerTestEntities implements ApplicationRunner {
         AppointmentType apt1 = appointmentTypeRepository.findById(1).get();
         System.out.println(apt1);
 
+        WorkScheduleItem ws = new WorkScheduleItem(DayOfWeek.MONDAY, LocalTime.parse("08:00:00"),LocalTime.parse("12:00:00"), 8, 30);
+        this.workScheduleItemRepository.save(ws);
+        
         Appointment appointment = new Appointment();
         appointment.setClient(c1);
         appointment.setProfessional(p1);
