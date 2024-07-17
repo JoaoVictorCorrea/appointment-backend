@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.project.agenda.domain.entities.Client;
 import com.project.agenda.domain.mappers.ClientMapper;
@@ -21,6 +22,7 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Transactional(readOnly = true)
     public Page<ClientResponse> findByNameContainingIgnoreCase(String name, int page, int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size);
@@ -29,6 +31,7 @@ public class ClientService {
         return pageClient.map(c -> ClientMapper.toClientResponseDTO(c));
     }
 
+    @Transactional(readOnly = true)
     public ClientResponse getById(long id) {
 
         Client client = clientRepository
@@ -38,6 +41,7 @@ public class ClientService {
         return ClientMapper.toClientResponseDTO(client);
     }
     
+    @Transactional
     public ClientResponse save(ClientRequest clientRequest) {
 
         Client client = clientRepository.save(ClientMapper.fromClientRequestDTO(clientRequest));
@@ -45,6 +49,7 @@ public class ClientService {
         return ClientMapper.toClientResponseDTO(client);
     }
     
+    @Transactional
     public void update(long id, ClientRequest clientRequest) {
 
         try {
@@ -60,6 +65,7 @@ public class ClientService {
         }
     }
     
+    @Transactional
     public void deleteById(long id) {
 
         try{    

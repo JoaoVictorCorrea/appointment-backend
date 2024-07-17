@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.project.agenda.domain.entities.Appointment;
 import com.project.agenda.domain.entities.AppointmentStatus;
@@ -25,6 +26,7 @@ public class SearchProfessionalAvailabilityTimesUseCase {
     @Autowired
     private AppointmentRepository appointmentRepository;
     
+    @Transactional(readOnly = true)
     public List<TimeSlot> executeUseCase(Professional professional, LocalDate date) {
 
         List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
