@@ -22,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.project.agenda.domain.services.ProfessionalService;
 import com.project.agenda.dto.ProfessionalRequest;
 import com.project.agenda.dto.ProfessionalResponse;
+import com.project.agenda.dto.ProfessionalWithAreaResponse;
 import com.project.agenda.dto.TimeSlotResponse;
 
 import jakarta.validation.Valid;
@@ -79,8 +80,24 @@ public class ProfessionalController {
     
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteProfessional(@PathVariable long id) {
-        
+
         professionalService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
+    }
+    
+    @PostMapping("{id_professional}/areas/{id_area}")
+    public ResponseEntity<ProfessionalWithAreaResponse> associateProfessionalWithArea(@PathVariable long id_professional, @PathVariable int id_area) {
+
+        ProfessionalWithAreaResponse professional = professionalService.associateProfessionalWithArea(id_professional, id_area);
+
+        return ResponseEntity.ok().body(professional);
+    }
+    
+    @DeleteMapping("{id_professional}/areas/{id_area}")
+    public ResponseEntity<Void> disassociateProfessionalWithArea(@PathVariable long id_professional, @PathVariable int id_area) {
+
+        professionalService.disassociateProfessionalWithArea(id_professional, id_area);
 
         return ResponseEntity.noContent().build();
     }

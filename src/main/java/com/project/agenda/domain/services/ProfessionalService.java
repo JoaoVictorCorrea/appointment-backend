@@ -11,17 +11,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.agenda.domain.entities.Area;
 import com.project.agenda.domain.entities.Professional;
 import com.project.agenda.domain.mappers.ProfessionalMapper;
 import com.project.agenda.domain.mappers.TimeSlotMapper;
 import com.project.agenda.domain.models.TimeSlot;
+import com.project.agenda.domain.repositories.AreaRepository;
 import com.project.agenda.domain.repositories.ProfessionalRepository;
+import com.project.agenda.domain.services.exceptions.BusinessException;
 import com.project.agenda.domain.services.exceptions.DatabaseException;
 import com.project.agenda.domain.services.exceptions.ParameterException;
 import com.project.agenda.domain.services.usecases.read.SearchProfessionalAvailabilityDaysUseCase;
 import com.project.agenda.domain.services.usecases.read.SearchProfessionalAvailabilityTimesUseCase;
 import com.project.agenda.dto.ProfessionalRequest;
 import com.project.agenda.dto.ProfessionalResponse;
+import com.project.agenda.dto.ProfessionalWithAreaResponse;
 import com.project.agenda.dto.TimeSlotResponse;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -37,6 +41,9 @@ public class ProfessionalService {
 
     @Autowired
     private ProfessionalRepository professionalRepository;
+
+    @Autowired
+    private AreaRepository areaRepository;
 
     @Transactional(readOnly = true)
     public Page<ProfessionalResponse> findByNameContainingIgnoreCase(String name, int page, int size) {
@@ -85,15 +92,52 @@ public class ProfessionalService {
     @Transactional
     public void deleteById(long id) {
 
-        try{    
+        try {
             if (!professionalRepository.existsById(id))
                 throw new EntityNotFoundException("Profissional não encontrado.");
-            
+
             professionalRepository.deleteById(id);
-        }
-        catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Conflito ao remover o profissional.");
         }
+    }
+    
+    @Transactional
+    public ProfessionalWithAreaResponse associateProfessionalWithArea(long id_professional, int id_area) {
+
+        Area area = areaRepository
+                .findById(id_area)
+                .orElseThrow(() -> new EntityNotFoundException("Area não encontrada."));
+
+        Professional professional = professionalRepository
+                .findById(id_professional)
+                .orElseThrow(() -> new EntityNotFoundException("Profissional não encontrado."));
+
+        if (isProfessionalAssociatedWithArea(professional, area))
+            throw new BusinessException("O profissional já trabalha esta area.");
+
+        professional.getAreas().add(area);
+        Professional professionalWithNewArea = professionalRepository.save(professional);
+
+        return ProfessionalMapper.toProfessionalWithAreaResponseDTO(professionalWithNewArea);
+    }
+    
+    @Transactional
+    public void disassociateProfessionalWithArea(long id_professional, int id_area) {
+        
+        Area area = areaRepository
+                .findById(id_area)
+                .orElseThrow(() -> new EntityNotFoundException("Area não encontrada."));
+
+        Professional professional = professionalRepository
+                .findById(id_professional)
+                .orElseThrow(() -> new EntityNotFoundException("Profissional não encontrado."));
+
+        if (!isProfessionalAssociatedWithArea(professional, area))
+            throw new BusinessException("O profissional não trabalha nesta area.");
+
+        professional.getAreas().remove(area);
+        professionalRepository.save(professional);
     }
 
     @Transactional(readOnly = true)
@@ -142,7 +186,11 @@ public class ProfessionalService {
     }
 
     private void checkMonthIsValidOrThrowsException(int month) {
-        if(month < 1 || month > 12)
+        if (month < 1 || month > 12)
             throw new ParameterException("Mês inválido. Utilize um valor de 1 à 12.");
+    }
+    
+    private boolean isProfessionalAssociatedWithArea(Professional professional, Area area) { 
+        return professional.getAreas().contains(area);
     }
 }
