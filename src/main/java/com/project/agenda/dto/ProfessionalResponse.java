@@ -4,5 +4,6 @@ public record ProfessionalResponse(
     long id,
     String name,
     String phone,
-    boolean active) { 
+    boolean active,
+    IntegerDTO area) { 
 }

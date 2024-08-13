@@ -159,6 +159,11 @@ public class ProfessionalService {
         checkMonthAndCurrentYearAreValidOrThrowsException(month, year);
 
         LocalDate start = LocalDate.of(year, month, 1);
+        
+        if (start.isBefore(LocalDate.now())) {
+            start = LocalDate.now();
+        }
+
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
         return this.searchProfessionalAvailabilityDaysUseCase.executeUseCase(professionalId, start, end);

@@ -3,6 +3,7 @@ package com.project.agenda.domain.mappers;
 import java.util.stream.Collectors;
 
 import com.project.agenda.domain.entities.Professional;
+import com.project.agenda.dto.IntegerDTO;
 import com.project.agenda.dto.ProfessionalRequest;
 import com.project.agenda.dto.ProfessionalResponse;
 import com.project.agenda.dto.ProfessionalWithAreaResponse;
@@ -15,7 +16,8 @@ public class ProfessionalMapper {
                 professional.getId(),
                 professional.getName(),
                 professional.getPhone(),
-                professional.isActive());
+                professional.isActive(),
+                new IntegerDTO(0));
     }
 
     public static ProfessionalWithAreaResponse toProfessionalWithAreaResponseDTO(Professional professional) {
