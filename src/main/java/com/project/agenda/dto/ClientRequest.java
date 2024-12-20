@@ -8,5 +8,6 @@ import jakarta.validation.constraints.NotNull;
 public record ClientRequest(
         @NotBlank(message = "Nome requirido") String name,
         @NotBlank(message = "Telefone requirido") String phone,
-        @NotNull(message = "Data de Nascimento requirida") LocalDate dateOfBirth) {
+        @NotNull(message = "Data de Nascimento requirida") LocalDate dateOfBirth,
+        String comments) {
 }

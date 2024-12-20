@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 public class Client extends Person {
 
     private LocalDate dateOfBirth;
+    private String comments;
 
     public Client() {}
     
@@ -22,9 +23,10 @@ public class Client extends Person {
         super(id);
     }
 
-    public Client(String name, String phone, LocalDate dateOfBirth) {
+    public Client(String name, String phone, LocalDate dateOfBirth, String comments) {
         super(name, phone);
         this.dateOfBirth = dateOfBirth;
+        this.comments = comments;
     }
 
     @OneToMany(mappedBy = "client")
@@ -38,6 +40,14 @@ public class Client extends Person {
         this.dateOfBirth = dateOfBirth;
     }
 
+    public String getComments(){
+        return this.comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
     public List<Appointment> getAppointments() {
         return appointments;
     }
@@ -48,6 +58,6 @@ public class Client extends Person {
 
     @Override
     public String toString() {
-        return "Client [dateOfBirth=" + dateOfBirth + " " + super.toString() + "]";
+        return "Client [dateOfBirth=" + dateOfBirth + " comments=" + comments + " " + super.toString() + "]";
     }
 }

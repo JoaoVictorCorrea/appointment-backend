@@ -6,5 +6,6 @@ public record ClientResponse(
     long id,
     String name,
     String phone,
-    LocalDate dateOfBirth) {
+    LocalDate dateOfBirth,
+    String comments) {
 }
