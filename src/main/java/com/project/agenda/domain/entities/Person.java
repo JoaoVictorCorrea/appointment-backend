@@ -35,6 +35,12 @@ public class Person implements Serializable {
         this.phone = phone;
     }
 
+    public Person(Long id, String name, String phone) {
+        this.id = id;
+        this.name = name;
+        this.phone = phone;
+    }
+
     public Long getId() {
         return id;
     }
