@@ -58,6 +58,7 @@ public class ClientService {
             client.setName(clientRequest.name());
             client.setPhone(clientRequest.phone());
             client.setDateOfBirth(clientRequest.dateOfBirth());
+            client.setComments(clientRequest.comments());
 
             clientRepository.save(client);
         } catch (EntityNotFoundException e) {

@@ -29,6 +29,12 @@ public class Client extends Person {
         this.comments = comments;
     }
 
+    public Client(Long id, String name, String phone, LocalDate dateOfBirth, String comments) {
+        super(id, name, phone);
+        this.dateOfBirth = dateOfBirth;
+        this.comments = comments;
+    }
+
     @OneToMany(mappedBy = "client")
     private List<Appointment> appointments = new ArrayList<>();
 
