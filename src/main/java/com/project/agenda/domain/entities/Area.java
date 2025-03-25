@@ -40,6 +40,11 @@ public class Area {
         this.id = id;
     }
 
+    public Area(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
