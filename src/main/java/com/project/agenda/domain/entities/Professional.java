@@ -51,6 +51,24 @@ public class Professional extends Person{
         this.active = active;
     }
 
+    public Professional(Long id, String name, String phone, boolean active) {
+        super(id, name, phone);
+        this.active = active;
+    }
+
+    public Professional(Long id, String name, String phone, boolean active, Set<Area> areas) {
+        super(id, name, phone);
+        this.active = active;
+        this.areas = areas;
+    }
+
+    public Professional(String name, String phone, boolean active, Set<Area> areas, List<Appointment> appointments) {
+        super(name, phone);
+        this.active = active;
+        this.areas = areas;
+        this.appointments = appointments;
+    }
+
     public boolean isActive() {
         return active;
     }
