@@ -216,7 +216,7 @@ public class ProfessionalServiceTest {
 
         long professionalId = 1L;
         int month = 3;
-        int year = 2025;
+        int year = LocalDate.now().plusYears(1).getYear();
         List<Integer> availableDays = List.of(5, 10, 15, 20);
 
         given(professionalRepository.existsById(anyLong())).willReturn(true);
@@ -239,7 +239,7 @@ public class ProfessionalServiceTest {
 
         long professionalId = 1L;
         int month = 3;
-        int year = 2025;
+        int year = LocalDate.now().plusYears(1).getYear();
         List<Integer> availableDays = List.of();
 
         given(professionalRepository.existsById(anyLong())).willReturn(true);
