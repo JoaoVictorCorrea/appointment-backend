@@ -1,10 +1,14 @@
 package com.project.agenda.integration.web.resources;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.agenda.dto.ProfessionalRequest;
 import org.assertj.core.util.Arrays;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -19,6 +23,9 @@ import java.time.temporal.TemporalAdjusters;
 public class ProfessionalControllerTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     public void getAvailabilityTimes_WithAppointments_Ok() throws Exception{
@@ -76,6 +83,82 @@ public class ProfessionalControllerTest {
 
         result.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
               .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    public void getProfessionalsByIdTest_OK() throws Exception {
+        final int PROFESSIONAL_ID = 6;
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/professionals/" + PROFESSIONAL_ID));
+        result.andExpect(MockMvcResultMatchers.status().isOk())
+              .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.equalTo(PROFESSIONAL_ID)))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.equalTo("Daniel Oliveira")))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.phone", Matchers.equalTo("13 111222333")))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.active", Matchers.equalTo(true)))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.area").exists());
+    }
+
+    @Test
+    public void getProfessionalsByIdTest_NotFound() throws Exception {
+        final int PROFESSIONAL_ID = 99;
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/professionals/" + PROFESSIONAL_ID));
+        result.andExpect(MockMvcResultMatchers.status().isNotFound())
+              .andExpect(MockMvcResultMatchers.jsonPath("$.error", Matchers.equalTo("Resource not found")))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.equalTo("Profissional não encontrado.")));
+    }
+
+    @Test
+    public void saveProfessionalTest_Created() throws Exception{
+        ProfessionalRequest professionalRequest = new ProfessionalRequest("Dirceu Assis", "11 992238200", true);
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/professionals")
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(objectMapper.writeValueAsString(professionalRequest)));
+
+        result.andExpect(MockMvcResultMatchers.status().isCreated())
+              .andExpect(MockMvcResultMatchers.header().exists("Location"))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+              .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.equalTo(professionalRequest.name())))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.phone", Matchers.equalTo(professionalRequest.phone())))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.active", Matchers.equalTo(professionalRequest.active())))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.area").exists());
+    }
+
+    @Test
+    public void saveProfessionalTest_UnprocessableEntity() throws Exception{
+        ProfessionalRequest professionalRequest = new ProfessionalRequest("", "", null);
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/professionals")
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(objectMapper.writeValueAsString(professionalRequest)));
+
+        result.andExpect(MockMvcResultMatchers.status().isUnprocessableEntity())
+              .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isArray())
+              .andExpect(MockMvcResultMatchers.jsonPath("$.errors", Matchers.hasSize(3)));
+    }
+
+    @Test
+    public void deleteProfessionalByIdTest_WhenNoAssociatedArea_NoContent() throws Exception{
+        final int PROFESSIONAL_ID = 7;
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.delete("/professionals/" + PROFESSIONAL_ID));
+        result.andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void deleteProfessionalByIdTest_WhenHasAssociatedArea_BadRequest() throws Exception{
+        final int PROFESSIONAL_ID = 6;
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.delete("/professionals/" + PROFESSIONAL_ID));
+
+        result.andExpect(MockMvcResultMatchers.status().isBadRequest())
+              .andExpect(MockMvcResultMatchers.jsonPath("$.error", Matchers.equalTo("Database Integrity Exception")))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.equalTo("Conflito com a integração dos dados.")));
+    }
+
+    @Test
+    public void deleteProfessionalByIdTest_NotFound() throws Exception{
+        final int PROFESSIONAL_ID = 99;
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.delete("/professionals/" + PROFESSIONAL_ID));
+
+        result.andExpect(MockMvcResultMatchers.status().isNotFound())
+              .andExpect(MockMvcResultMatchers.jsonPath("$.error", Matchers.equalTo("Resource not found")))
+              .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.equalTo("Profissional não encontrado.")));
     }
 }
     
